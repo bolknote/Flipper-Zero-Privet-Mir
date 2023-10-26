@@ -1,3 +1,9 @@
+/*
+ * This is part of
+ * Universal 8bit Graphics Library (https://github.com/olikraus/u8g2/)
+ * Copyright (c) 2016, olikraus@gmail.com
+ */
+
 #include "unicode_u8g2.h"
 
 static uint16_t unicode_font_get_word(const uint8_t* font, uint8_t offset) {
