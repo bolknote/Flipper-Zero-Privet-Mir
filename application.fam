@@ -1,0 +1,7 @@
+App(
+    appid="unicode",
+    name="Unicode",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="unicode_main",
+    fap_category="Misc",
+)
