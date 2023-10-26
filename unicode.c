@@ -1,4 +1,5 @@
-#include "unicode.h"
+#include "helpers/unicode.h"
+#include <u8g2/u8g2_fonts.c>
 
 void unicode_draw_utf8_str(Canvas* canvas, uint8_t x, uint8_t y, char* str) {
     FuriStringUTF8State state = FuriStringUTF8StateStarting;
@@ -31,36 +32,9 @@ void unicode_render_callback(Canvas* canvas, void* ctx) {
     unicode_draw_utf8_str(canvas, 0, 5 * h, "Евгений Степанищев, 2023");
 }
 
-static void unicode_input_callback(InputEvent* input_event, void* ctx) {
-    furi_assert(ctx);
-
-    FuriMessageQueue* event_queue = ctx;
-    furi_message_queue_put(event_queue, input_event, FuriWaitForever);
-}
-
 int32_t unicode_main(void* p) {
     UNUSED(p);
-
-    ViewPort* view_port = view_port_alloc();
-    view_port_draw_callback_set(view_port, unicode_render_callback, NULL);
-    Gui* gui = furi_record_open(RECORD_GUI);
-    gui_add_view_port(gui, view_port, GuiLayerFullscreen);
-
-    FuriMessageQueue* event_queue = furi_message_queue_alloc(1, sizeof(InputEvent));
-    view_port_input_callback_set(view_port, unicode_input_callback, event_queue);
-
-    for(InputEvent event;;) {
-        if(furi_message_queue_get(event_queue, &event, 0) == FuriStatusOk) {
-            if(event.type == InputTypePress) break;
-        }
-    }
-
-    view_port_enabled_set(view_port, false);
-    gui_remove_view_port(gui, view_port);
-    view_port_free(view_port);
-    furi_message_queue_free(event_queue);
-
-    furi_record_close(RECORD_GUI);
-
+    __attribute__((__cleanup__(unicode_app_free))) UnicodeApp* app = unicode_app_alloc();
+    unicode_wait_a_key(app);
     return 0;
 }
